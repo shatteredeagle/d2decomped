@@ -1,0 +1,61 @@
+# CodeRabbit configuration for the d2decomped FORK only (staging PRs on the fork's main).
+# Lives on the fork's main, never in a commit that goes upstream (upstream has no .coderabbit.yaml).
+# V (card crsetup, 2026-11-02): keys checked against https://coderabbit.ai/integrations/schema.v2.json.
+# reviews.* has no commit-message check: the commit rules below are given as a PR-level instruction only.
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+tone_instructions: "Terse and factual. Findings first, no praise, no poems."
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: false
+  collapse_walkthrough: true
+  path_filters:
+    - "!**/*.png"
+    - "!**/*.jpg"
+    - "!**/*.gif"
+    - "!**/*.svg"
+    - "!**/*.log"
+    - "!**/*.lock"
+    - "!**/build/**"
+    - "!**/generated/**"
+    - "!**/*.generated.*"
+    - "!**/*.bin"
+    - "!**/*.tsv"
+    - "!docs/PLAN.md"
+  path_instructions:
+    - path: "components/**/*.{cpp,hpp}"
+      instructions: >
+        CI parity lessons (report these, CI builds with several compilers). GCC -Werror: a range-for that copies the element
+        (range-loop-construct), take const auto& or auto&. MSVC /W4: C4456 a local shadows an outer local. windows.h macros
+        must not be used as identifiers: far, near, min, max, small, interface, IN, OUT. clang-tidy: every symbol used has a
+        direct include (misc-include-cleaner); readability-identifier-length flags short names, including x and y in
+        structured bindings; no one- or two-letter names beyond the conventional loop counters. Check std::size_t versus int
+        conversions and signed/unsigned comparisons. Every behaviour change needs a test and an evidence row; a known gap gets
+        a "// ponytail:" note. No pasted decompiled code or game data. Do not rewrite style.
+    - path: "tests/**"
+      instructions: >
+        Every behaviour change has a test here. Same CI parity points as components (range-loop copies, shadowed locals,
+        windows.h macro names, direct includes, identifier length, size_t versus int). Tests state the case count and the
+        evidence row they cover; no game files required.
+    - path: "docs/research/re/**"
+      instructions: >
+        Addresses, offsets, tables and the algorithm in prose; each claim tagged with its confidence. Raw decompiled C never
+        goes in; function address tags and short formulas only. Bugs of the original belong in bugs.md with a confidence
+        level, intentional differences in deviations.md behind a toggle.
+    - path: "**"
+      instructions: >
+        House rules for the whole PR. Commit messages: short subject, at most three body lines, no Co-authored-by line, no
+        "generated with AI" line, no noreply@anthropic.com, no emoji; the git author is the contributor; when someone else
+        reported or traced the item the last line is "Reported-by: Name" or "Traced-by: Name". The PR body ends with
+        "Agent: <name>" (or "Agent: none"). docs/PLAN.md is not edited (the maintainer updates it after a merge).
+        CodeRabbit cannot read commit messages through reviews.*; mention a violation only if the PR body or title shows it.
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+chat:
+  auto_reply: true

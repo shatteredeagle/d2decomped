@@ -76,7 +76,7 @@ int main(int argc, char** argv) try {
     assert((entered(4, 40000, 2500001) == std::pair<std::int64_t, std::int64_t>{ 40000, 0 }));
     std::printf("OK: a save's gold over its cap is 0 on entering a game\n");
     return 0;
-} catch (const std::exception& e) {
-    std::fprintf(stderr, "FAIL: %s\n", e.what());
+} catch (const std::exception& error) {
+    std::fprintf(stderr, "FAIL: %s\n", error.what());
     return 1;
 }
